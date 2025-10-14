@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:8.0.43 # Hoặc phiên bản khác bạn muốn dùng
+    container_name: ev_maint_mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword # Mật khẩu cho tài khoản root (Nên dùng trong môi trường dev)
+      MYSQL_DATABASE: customer_service # Tên database
+      MYSQL_USER: root # Tài khoản người dùng cho ứng dụng
+      MYSQL_PASSWORD: root # Mật khẩu cho tài khoản ứng dụng
+    ports:
+      - "3306:3306" # Mở cổng 3306 trên máy host để nhóm có thể kết nối
+    volumes:
+      - mysql_data:/var/lib/mysql # Lưu dữ liệu để không bị mất
+      # Tùy chọn: - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Để chạy script khởi tạo
+volumes:
+  mysql_data:
