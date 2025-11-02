@@ -1,0 +1,24 @@
+# Cổng chạy cho service này (ví dụ 8083)
+server:
+  port: 8083
+
+# Cấu hình kết nối MySQL
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/customer_service
+    username: root
+    password: rootpassword
+  
+  # Giúp Spring Boot tự động tạo/cập nhật bảng (như bảng Notification)
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+# URLs của các service khác (phải khớp với @Value)
+services:
+  customer:
+    url: http://localhost:8081/api/customers
+  maintenance:
+    url: http://localhost:8082/api/maintenance
+  billing:
+    url: http://localhost:8084/api/billing

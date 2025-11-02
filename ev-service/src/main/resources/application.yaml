@@ -1,9 +1,0 @@
-server:
-  port: 8080
-  servlet:
-    context-path: /customer
-spring:
-  datasource:
-    url: "jdbc::mysql://localhost:3306/customer_service"
-    username: root
-    password: root
