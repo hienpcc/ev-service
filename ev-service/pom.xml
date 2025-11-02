@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.service</groupId>
-	<artifactId>ev-service</artifactId>
+	<artifactId>ev-service1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ev-service</name>
 	<description>Project EV</description>
