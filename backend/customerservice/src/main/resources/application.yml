@@ -1,0 +1,37 @@
+# 1. Cổng chạy cho service (phải khớp với cổng 8082 trong docker-compose)
+server:
+  port: 8081
+
+# 2. Tên service (phải khớp với tên trong Eureka và docker-compose)
+spring:
+  application:
+    name: customer-service
+
+  # 3. Cấu hình CSDL (Database)
+  datasource:
+    # URL trỏ đến tên service của CSDL trong Docker (db_monolith)
+    # Đã bao gồm các tham số cho MySQL 8
+    url: jdbc:mysql://db_monolith:3306/customer_service?useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # 4. Cấu hình JPA (để tạo bảng tự động)
+  jpa:
+    hibernate:
+      # 'update' sẽ tự động thêm cột/bảng mới dựa trên Entity
+      ddl-auto: update
+    show-sql: true
+    # Chỉ định rõ cú pháp của MySQL
+    database-platform: org.hibernate.dialect.MySQLDialect
+
+# 5. Cấu hình Eureka Client
+eureka:
+  client:
+    service-url:
+      # Địa chỉ của Eureka Server (dùng tên service 'eureka-server' trong Docker)
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    # Ưu tiên dùng tên 'hostname' (tên service) thay vì IP
+    hostname: appointment-service
+    prefer-ip-address: false

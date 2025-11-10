@@ -1,0 +1,83 @@
+# 1. Cổng chạy cho Gateway (Cổng chính của hệ thống)
+server:
+  port: 8080
+
+# 2. Tên service (để đăng ký với Eureka)
+spring:
+  application:
+    name: gateway-service
+
+  # 3. CẤU HÌNH QUAN TRỌNG: Tắt CSDL
+  # Gateway không bao giờ được kết nối CSDL
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+  # 4. CẤU HÌNH QUAN TRỌNG: Bản đồ (Routes)
+  cloud:
+    gateway:
+      routes:
+        # Route 1: auth-service (Public)
+        # Gửi tất cả request /api/v1/auth/** đến auth-service
+        - id: auth-service
+          uri: lb://auth-service # lb = Load Balancer (dùng tên service)
+          predicates:
+            - Path=/api/v1/auth/**
+
+        # Route 2: customer-service (Private)
+        - id: customer-service
+          uri: lb://customer-service
+          predicates:
+            - Path=/api/v1/customers/**, /api/v1/vehicles/**
+          filters:
+            - AuthenticationFilter # Áp dụng Filter xác thực (file Java)
+
+        # Route 3: appointment-service (Private)
+        - id: appointment-service
+          uri: lb://appointment-service
+          predicates:
+            - Path=/api/v1/appointments/**
+          filters:
+            - AuthenticationFilter
+
+        # Route 4: maintenance-service (Private)
+        - id: maintenance-service
+          uri: lb://maintenance-service
+          predicates:
+            - Path=/api/v1/servicerecords/**, /api/v1/technicians/**, /api/v1/spareparts/**
+          filters:
+            - AuthenticationFilter
+
+        # Route 5: billing-service (Private)
+        - id: billing-service
+          uri: lb://billing-service
+          predicates:
+            - Path=/api/v1/invoices/**, /api/v1/reports/**
+          filters:
+            - AuthenticationFilter
+
+        # Route 6: notification-service (Private)
+        # (Lưu ý: dùng đúng tên 'noitification-service' bị sai chính tả mà bạn đã dùng)
+        - id: noitification-service
+          uri: lb://noitification-service
+          predicates:
+            - Path=/api/v1/notifications/**
+          filters:
+            - AuthenticationFilter
+
+# 5. Cấu hình Eureka Client
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    hostname: gateway-service
+    prefer-ip-address: false
+
+# 6. Cấu hình JWT (Phải giống hệt auth-service)
+application:
+  security:
+    jwt:
+      secret-key: ZXQtc2VydmljZS1jZW50ZXItc3VwZXItbG9uZy1zZWNyZXQta2V5LWZvci1qd3Q=
+      expiration: 86400000

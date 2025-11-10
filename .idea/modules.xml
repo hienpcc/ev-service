@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ev-service.iml" filepath="$PROJECT_DIR$/.idea/ev-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend/auth-service/auth-service.iml" filepath="$PROJECT_DIR$/backend/auth-service/auth-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend/billingservice/billing-service.iml" filepath="$PROJECT_DIR$/backend/billingservice/billing-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend/customerservice/customerservice.iml" filepath="$PROJECT_DIR$/backend/customerservice/customerservice.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ev-service.iml" filepath="$PROJECT_DIR$/ev-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend/gateway-service/gateway-service.iml" filepath="$PROJECT_DIR$/backend/gateway-service/gateway-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend/maintenanceservice/maintenance-service.iml" filepath="$PROJECT_DIR$/backend/maintenanceservice/maintenance-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend/noitificationservice/notification-service.iml" filepath="$PROJECT_DIR$/backend/noitificationservice/notification-service.iml" />
     </modules>
   </component>
 </project>

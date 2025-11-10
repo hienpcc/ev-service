@@ -1,0 +1,14 @@
+# 1. Cổng chạy chuẩn của Eureka
+server:
+  port: 8761
+
+# 2. Cấu hình Eureka Server
+eureka:
+  client:
+    # Bảo nó không cần tự đăng ký với chính mình
+    register-with-eureka: false
+    # Bảo nó không cần cố gắng tìm các service khác
+    fetch-registry: false
+  server:
+    # (Tùy chọn) Tắt chế độ tự bảo vệ khi test
+    wait-time-in-ms-when-sync-empty: 0

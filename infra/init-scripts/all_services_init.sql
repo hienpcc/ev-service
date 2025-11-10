@@ -1,4 +1,11 @@
--- I. TẠO CÁC SCHEMA CÒN LẠI
+/*
+-- FILE NÀY ĐÃ ĐƯỢC SỬA CÁC LỖI SAU:
+-- 1. Thêm CREATE DATABASE IF NOT EXISTS customer_service;
+-- 2. Thêm dấu chấm phẩy (;) sau TẤT CẢ các lệnh USE.
+*/
+
+-- I. TẠO CÁC SCHEMA
+CREATE DATABASE IF NOT EXISTS customer_service; -- (LỖI 1 ĐÃ SỬA)
 CREATE DATABASE IF NOT EXISTS notification_service;
 CREATE DATABASE IF NOT EXISTS maintenance_service;
 CREATE DATABASE IF NOT EXISTS appointment_service;
@@ -35,194 +42,202 @@ GRANT ALL PRIVILEGES ON account_service.* TO 'account_user'@'%';
 FLUSH PRIVILEGES;
 
 -- 1. TẠO BẢNG CHO CUSTOMER_SERVICE
-USE customer_service
-CREATE TABLE `customer_service`.`customer` (
-  `customerID` INT NOT NULL,
-  `name` VARCHAR(45) NULL,
-  `phone` VARCHAR(10) NULL,
-  `address` VARCHAR(45) NULL,
-  `paymentInfor` VARCHAR(45) NULL,
-  PRIMARY KEY (`customerID`));
+USE customer_service; -- (LỖI 2 ĐÃ SỬA)
 
-  CREATE TABLE `customer_service`.`vehicle` (
-  `vehicleID` INT NOT NULL,
-  `vin` VARCHAR(45) NULL,
-  `model` VARCHAR(45) NULL,
-  `year` VARCHAR(45) NULL,
-  `customerID` INT NOT NULL,
-  PRIMARY KEY (`vehicleID`));
+CREATE TABLE `customer` (
+                            `customerID` INT NOT NULL,
+                            `name` VARCHAR(45) NULL,
+                            `phone` VARCHAR(10) NULL,
+                            `address` VARCHAR(45) NULL,
+                            `paymentInfor` VARCHAR(45) NULL,
+                            PRIMARY KEY (`customerID`));
 
-ALTER TABLE `customer_service`.`vehicle` 
-ADD INDEX `fk_vehicle_customer_idx` (`customerID` ASC) VISIBLE;
-;
-ALTER TABLE `customer_service`.`vehicle` 
-ADD CONSTRAINT `fk_vehicle_customer`
-  FOREIGN KEY (`customerID`)
-  REFERENCES `customer_service`.`customer` (`customerID`)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION;
+CREATE TABLE `vehicle` (
+                           `vehicleID` INT NOT NULL,
+                           `vin` VARCHAR(45) NULL,
+                           `model` VARCHAR(45) NULL,
+                           `year` VARCHAR(45) NULL,
+                           `customerID` INT NOT NULL,
+                           PRIMARY KEY (`vehicleID`));
+
+ALTER TABLE `vehicle`
+    ADD INDEX `fk_vehicle_customer_idx` (`customerID` ASC) VISIBLE;
+
+ALTER TABLE `vehicle`
+    ADD CONSTRAINT `fk_vehicle_customer`
+        FOREIGN KEY (`customerID`)
+            REFERENCES `customer` (`customerID`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION;
 
 -- 2. TẠO BẢNG CHO NOTIFICATION_SERVICE
-USE notification_service;
-CREATE TABLE `notification_service`.`notification` (
-  `notificationID` INT NOT NULL,
-  `customerID` INT NULL,
-  `type` VARCHAR(45) NULL,
-  `message` VARCHAR(45) NULL,
-  `status` VARCHAR(100) NULL,
-  PRIMARY KEY (`notificationID`));
+USE notification_service; -- (File của bạn đã làm đúng dòng này)
+CREATE TABLE `notification` (
+                                `notificationID` INT NOT NULL,
+                                `customerID` INT NULL,
+                                `type` VARCHAR(45) NULL,
+                                `message` VARCHAR(45) NULL,
+                                `status` VARCHAR(100) NULL,
+                                PRIMARY KEY (`notificationID`));
 
 
 -- 3. TẠO BẢNG CHO MAINTENANCE_SERVICE
-USE maintenance_service
-CREATE TABLE `maintenance_service`.`technician` (
-  `technicianID` INT NOT NULL,
-  `name` VARCHAR(45) NULL,
-  `specialization` VARCHAR(45) NULL,
-  `certificate` VARCHAR(45) NULL,
-  `shiftSchedule` VARCHAR(45) NULL,
-  PRIMARY KEY (`technicianID`));
+USE maintenance_service; -- (LỖI 2 ĐÃ SỬA)
 
-CREATE TABLE `maintenance_service`.`serviceRecord` (
-  `recordID` INT NOT NULL,
-  `technicianID` INT NULL,
-  `vehicleID` INT NULL,
-  `appointmentID` INT NULL,
-  `note` VARCHAR(45) NULL,
-  `cost` VARCHAR(45) NULL,
-  `date` DATETIME NULL,
-  PRIMARY KEY (`recordID`));
+CREATE TABLE `technician` (
+                              `technicianID` INT NOT NULL,
+                              `name` VARCHAR(45) NULL,
+                              `specialization` VARCHAR(45) NULL,
+                              `certificate` VARCHAR(45) NULL,
+                              `shiftSchedule` VARCHAR(45) NULL,
+                              PRIMARY KEY (`technicianID`));
 
-ALTER TABLE `maintenance_service`.`serviceRecord` 
-ADD INDEX `fk_record_tech_idx_idx` (`technicianID` ASC) VISIBLE;
-;
-ALTER TABLE `maintenance_service`.`serviceRecord` 
-ADD CONSTRAINT `fk_record_tech_idx`
-  FOREIGN KEY (`technicianID`)
-  REFERENCES `maintenance_service`.`technician` (`technicianID`)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION;
+CREATE TABLE `serviceRecord` (
+                                 `recordID` INT NOT NULL,
+                                 `technicianID` INT NULL,
+                                 `vehicleID` INT NULL,
+                                 `appointmentID` INT NULL,
+                                 `note` VARCHAR(45) NULL,
+                                 `cost` VARCHAR(45) NULL,
+                                 `date` DATETIME NULL,
+                                 PRIMARY KEY (`recordID`));
 
-CREATE TABLE `maintenance_service`.`sparePart` (
-  `partID` INT NOT NULL,
-  `name` VARCHAR(45) NULL,
-  `description` VARCHAR(45) NULL,
-  `quantityInStock` INT NULL,
-  `minStockLevel` INT NULL,
-  `price` DOUBLE NULL,
-  PRIMARY KEY (`partID`));
+ALTER TABLE `serviceRecord`
+    ADD INDEX `fk_record_tech_idx_idx` (`technicianID` ASC) VISIBLE;
 
-CREATE TABLE `maintenance_service`.`servicePartUsage` (
-  `usageID` INT NOT NULL,
-  `recordID` INT NULL,
-  `partID` INT NULL,
-  `quantityUsed` INT NULL,
-  PRIMARY KEY (`usageID`));
+ALTER TABLE `serviceRecord`
+    ADD CONSTRAINT `fk_record_tech_idx`
+        FOREIGN KEY (`technicianID`)
+            REFERENCES `technician` (`technicianID`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION;
 
-ALTER TABLE `maintenance_service`.`servicePartUsage` 
-ADD INDEX `fk_partusage_record_idx` (`recordID` ASC) VISIBLE,
+CREATE TABLE `sparePart` (
+                             `partID` INT NOT NULL,
+                             `name` VARCHAR(45) NULL,
+                             `description` VARCHAR(45) NULL,
+                             `quantityInStock` INT NULL,
+                             `minStockLevel` INT NULL,
+                             `price` DOUBLE NULL,
+                             PRIMARY KEY (`partID`));
+
+CREATE TABLE `servicePartUsage` (
+                                    `usageID` INT NOT NULL,
+                                    `recordID` INT NULL,
+                                    `partID` INT NULL,
+                                    `quantityUsed` INT NULL,
+                                    PRIMARY KEY (`usageID`));
+
+ALTER TABLE `servicePartUsage`
+    ADD INDEX `fk_partusage_record_idx` (`recordID` ASC) VISIBLE,
 ADD INDEX `fk_partusage_sparepart_idx` (`partID` ASC) VISIBLE;
-;
-ALTER TABLE `maintenance_service`.`servicePartUsage` 
-ADD CONSTRAINT `fk_partusage_record`
-  FOREIGN KEY (`recordID`)
-  REFERENCES `maintenance_service`.`serviceRecord` (`recordID`)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION,
+
+ALTER TABLE `servicePartUsage`
+    ADD CONSTRAINT `fk_partusage_record`
+        FOREIGN KEY (`recordID`)
+            REFERENCES `serviceRecord` (`recordID`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
 ADD CONSTRAINT `fk_partusage_sparepart`
   FOREIGN KEY (`partID`)
-  REFERENCES `maintenance_service`.`sparePart` (`partID`)
+  REFERENCES `sparePart` (`partID`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
 
 -- 4. TẠO BẢNG CHO APPOINTMENT_SERVICE
-USE appointment_service
-CREATE TABLE `appointment_service`.`serviceCenter` (
-  `serviceCenterID` INT NOT NULL,
-  `name` VARCHAR(45) NULL,
-  `address` VARCHAR(45) NULL,
-  `contactInfo` VARCHAR(10) NULL,
-  PRIMARY KEY (`serviceCenterID`));
+USE appointment_service; -- (LỖI 2 ĐÃ SỬA)
+
+CREATE TABLE `serviceCenter` (
+                                 `serviceCenterID` INT NOT NULL,
+                                 `name` VARCHAR(45) NULL,
+                                 `address` VARCHAR(45) NULL,
+                                 `contactInfo` VARCHAR(10) NULL,
+                                 PRIMARY KEY (`serviceCenterID`));
+
+-- (Lưu ý: Bảng serviceType phải được tạo TRƯỚC bảng appointment)
+CREATE TABLE `appointment_service`.`serviceType` (
+                                                     `serviceTypeID` INT NOT NULL,
+                                                     `name` VARCHAR(45) NULL,
+                                                     `description` VARCHAR(45) NULL,
+                                                     PRIMARY KEY (`serviceTypeID`));
 
 CREATE TABLE `appointment_service`.`appointment` (
-  `appointmentID` INT NOT NULL,
-  `servicetypeID` INT NULL,
-  `serviceCenterID` INT NULL,
-  `customerID` INT NULL,
-  `vehicleID` INT NULL,
-  `status` VARCHAR(45) NULL,
-  `scheduledDate` DATETIME NULL,
-  `createdAt` VARCHAR(45) NULL,
-  `notes` VARCHAR(45) NULL,
-  PRIMARY KEY (`appointmentID`));
+                                                     `appointmentID` INT NOT NULL,
+                                                     `servicetypeID` INT NULL,
+                                                     `serviceCenterID` INT NULL,
+                                                     `customerID` INT NULL,
+                                                     `vehicleID` INT NULL,
+                                                     `status` VARCHAR(45) NULL,
+                                                     `scheduledDate` DATETIME NULL,
+                                                     `createdAt` VARCHAR(45) NULL,
+                                                     `notes` VARCHAR(45) NULL,
+                                                     PRIMARY KEY (`appointmentID`));
 
-  ALTER TABLE `appointment_service`.`appointment` 
-ADD INDEX `fk_appoint_sercen_idx` (`serviceCenterID` ASC) VISIBLE,
+ALTER TABLE `appointment_service`.`appointment`
+    ADD INDEX `fk_appoint_sercen_idx` (`serviceCenterID` ASC) VISIBLE,
 ADD INDEX `fk_appoint_sertype_idx` (`servicetypeID` ASC) VISIBLE;
-;
-ALTER TABLE `appointment_service`.`appointment` 
-ADD CONSTRAINT `fk_appoint_sercen`
-  FOREIGN KEY (`serviceCenterID`)
-  REFERENCES `appointment_service`.`serviceCenter` (`serviceCenterID`)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION,
+
+ALTER TABLE `appointment_service`.`appointment`
+    ADD CONSTRAINT `fk_appoint_sercen`
+        FOREIGN KEY (`serviceCenterID`)
+            REFERENCES `appointment_service`.`serviceCenter` (`serviceCenterID`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
 ADD CONSTRAINT `fk_appoint_sertype`
   FOREIGN KEY (`servicetypeID`)
   REFERENCES `appointment_service`.`serviceType` (`serviceTypeID`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
 
-CREATE TABLE `appointment_service`.`serviceType` (
-  `serviceTypeID` INT NOT NULL,
-  `name` VARCHAR(45) NULL,
-  `description` VARCHAR(45) NULL,
-  PRIMARY KEY (`serviceTypeID`));
 -- 5. TẠO BẢNG CHO BILLING_SERVICE
-USE billing_service
-CREATE TABLE `billing_service`.`servicePackage` (
-  `packageID` INT NOT NULL,
-  `name` VARCHAR(45) NULL,
-  `description` VARCHAR(45) NULL,
-  `price` DOUBLE NULL,
-  `duration` DATETIME NULL,
-  PRIMARY KEY (`packageID`));
+USE billing_service; -- (LỖI 2 ĐÃ SỬA)
 
-  CREATE TABLE `billing_service`.`customerServicePackage` (
-  `subscriptionID` INT NOT NULL,
-  `customerID` INT NULL,
-  `packageID` INT NULL,
-  `startDate` DATETIME NULL,
-  `endDate` DATETIME NULL,
-  `status` VARCHAR(45) NULL,
-  `paymentMethod` VARCHAR(45) NULL,
-  `autoRenew` VARCHAR(45) NULL,
-  PRIMARY KEY (`subscriptionID`));
+CREATE TABLE `servicePackage` (
+                                  `packageID` INT NOT NULL,
+                                  `name` VARCHAR(45) NULL,
+                                  `description` VARCHAR(45) NULL,
+                                  `price` DOUBLE NULL,
+                                  `duration` DATETIME NULL,
+                                  PRIMARY KEY (`packageID`));
 
-ALTER TABLE `billing_service`.`customerServicePackage` 
-ADD INDEX `fk_pack_cus_idx` (`packageID` ASC) VISIBLE;
-;
-ALTER TABLE `billing_service`.`customerServicePackage` 
-ADD CONSTRAINT `fk_pack_cus`
-  FOREIGN KEY (`packageID`)
-  REFERENCES `billing_service`.`servicePackage` (`packageID`)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION;
+CREATE TABLE `customerServicePackage` (
+                                          `subscriptionID` INT NOT NULL,
+                                          `customerID` INT NULL,
+                                          `packageID` INT NULL,
+                                          `startDate` DATETIME NULL,
+                                          `endDate` DATETIME NULL,
+                                          `status` VARCHAR(45) NULL,
+                                          `paymentMethod` VARCHAR(45) NULL,
+                                          `autoRenew` VARCHAR(45) NULL,
+                                          PRIMARY KEY (`subscriptionID`));
 
-CREATE TABLE `billing_service`.`invoice` (
-  `invoiceID` INT NOT NULL,
-  `recordID` INT NULL,
-  `customerID` INT NULL,
-  `status` VARCHAR(45) NULL,
-  `amount` VARCHAR(45) NULL,
-  `date` DATETIME NULL,
-  `paymentMethod` VARCHAR(45) NULL,
-  PRIMARY KEY (`invoiceID`));
+ALTER TABLE `customerServicePackage`
+    ADD INDEX `fk_pack_cus_idx` (`packageID` ASC) VISIBLE;
+
+ALTER TABLE `customerServicePackage`
+    ADD CONSTRAINT `fk_pack_cus`
+        FOREIGN KEY (`packageID`)
+            REFERENCES `servicePackage` (`packageID`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION;
+
+CREATE TABLE `invoice` (
+                           `invoiceID` INT NOT NULL,
+                           `recordID` INT NULL,
+                           `customerID` INT NULL,
+                           `status` VARCHAR(45) NULL,
+                           `amount` VARCHAR(45) NULL,
+                           `date` DATETIME NULL,
+                           `paymentMethod` VARCHAR(45) NULL,
+                           PRIMARY KEY (`invoiceID`));
+
 -- 6. TẠO BẢNG CHO ACCOUNT_SERVICE
-USE account_service
-CREATE TABLE `account_service`.`account` (
-  `accountID` INT NOT NULL,
-  `username` VARCHAR(15) NULL,
-  `password` VARCHAR(45) NULL,
-  `role` VARCHAR(45) NULL,
-  `status` VARCHAR(45) NULL,
-  PRIMARY KEY (`accountID`));
+USE account_service; -- (LỖI 2 ĐÃ SỬA)
+
+CREATE TABLE `account` (
+                           `accountID` INT NOT NULL,
+                           `username` VARCHAR(15) NULL,
+                           `password` VARCHAR(45) NULL,
+                           `role` VARCHAR(45) NULL,
+                           `status` VARCHAR(45) NULL,
+                           PRIMARY KEY (`accountID`));
